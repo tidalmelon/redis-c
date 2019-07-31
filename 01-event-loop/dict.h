@@ -198,42 +198,49 @@ typedef void (dictScanFunction)(void *privdata, const dictEntry *de);
 #define dictGetKey(he) ((he)->key)
 // 返回获取给定节点的值
 #define dictGetVal(he) ((he)->v.val)
+// 返回获取给定节点的有符号整数值
+#define dictGetSignedIntegerVal(he) ((he)->.s64)
+// 返回给定节点的无符号整数值
+#define dictGetUnsignedIntegerVal((he)->s.u64)
+// 返回给定字典的大小
+#define dictSlots(d) ((d)->ht[0].size+(d)->ht[1].size)
+// 返回字典的已有节点数量
+#define dictSize(d) ((d)->ht[0].used+(d)->ht[1].used)
+// 查看字典是否正在 rehash
+#define dictIsRehashing(ht) ((ht)->rehashidx != -1)
 
+/* API */
+dict *dictCreate(dictType *type, void *privDataPtr);
+int dictExpand(dict *d, unsigned long size);
+int dictAdd(dict *d, void *key, void *val);
+dictEntry *dictAddRaw(dict *d, void *val);
+int dictReplace(dict *d, void *key, void *val);
+dictEntry *dictReplaceRaw(dict *d, void *key);
+int dictDelete(dict *d, const void *key);
+int dictDeleteNoFree(dict *d, const void *key);
+void dictRelease(dict *d);
+dictEntry *dictFind(dict *d, const void *key);
+void *dictFetchValue(dict *d, const void *key);
+int dictResize(dict *d);
+dictIterator *dictGetIterator(dict *d);
+dictIterator *dictGetSafeIterator(dict *d);
+dictEntry *dictNext(dictIterator *iter);
+void dictReleaseIterator(dictIterator *iter);
+dictEntry *dictGetRandomKey(dict *d);
+int dictGetRandomKeys(dict *d, dictEntry **des, int count);
+unsigned int dictGenHashFunction(const void *key, int len);
+unsigned int dictGenCaseHashFunction(const unsigned char *buf, int len);
+void dictEmpty(dict *d, void(callback)(void*));
+void dictEnableResize(void);
+void dictDisableResize(void);
+int dictRehash(dict *d, int n);
+int dictRehashMilliseconds(dict *d, int ms);
+unsigned int dictGetHashFunctionSeed(void);
+unsigned long dictScan(dict *d, unsigned long v, dictScanFunction *fn, void *privdata);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Hash table types */
+extern dictType dictTypeHeapStringCopyKey;
+extern dictType dictTypeHeapStrings;
+extern dictType dictTypeHeapStringCopyKeyValue;
 
 #endif
