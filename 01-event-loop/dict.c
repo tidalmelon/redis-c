@@ -68,3 +68,35 @@ void dictSetHashFunctionSeed(uint32_t seed) {
 uint32_t dictGetHashFunctionSeed(void) {
      return dict_hash_function_seed;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
