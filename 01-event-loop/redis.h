@@ -66,29 +66,4 @@
 #define REDIS_ENCODING_EMBSTR 8  /* Embedded sds string encodig */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
