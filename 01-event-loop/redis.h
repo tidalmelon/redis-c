@@ -65,5 +65,33 @@
 #define REDIS_ENCODING_INT 1     /* Encoded as integer */
 #define REDIS_ENCODING_EMBSTR 8  /* Embedded sds string encodig */
 
+/* 命令标志 */
+#define REDIS_CMD_WRITE 1         /* 'w' flag */
+#define REDIS_CMD_READONLY 2      /* 'r' flag */
+#define REDIS_CMD_DENYOOM 4       /* 'm' flag */
+#define REDIS_CMD_NOT_USED_1 8    /* 'no longer used flag */
+#define REDIS_CMD_ADMIN 16        /* 'a' flag */
+#define REDIS_CMD_PUBSUB 32       /* 'p' flag */
+#define REDIS_CMD_NOSCRIPT 64     /* 's' flag */
+#define REDIS_CMD_RANDOM  128     /* 'R' flag */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
