@@ -31,13 +31,26 @@ struct sdshdr {
  * 
  * T = o(1)
  */
- static inline size_t sdslen(const sds s) {
-     struct sdshdr *sh = (void*)(s - (sizeof(struct sdshdr)));
-     return sh->len;
- }
+static inline size_t sdslen(const sds s) {
+    struct sdshdr *sh = (void*)(s - (sizeof(struct sdshdr)));
+    return sh->len;
+}
 
+/*
+ * 返回 sds 可用空间的长度
+ *
+ * T = O(1)
+ */
+static inline size_t sdsavail(const sds s) {
+    struct sdshdr *sh = (void*)(s - (sizeof(struct sdshdr)));
+    return sh->free;
+}
 
-
+/* api */
+sds sdsnewlen(const void *init, size_t initlen);
+sds sdsnew(const char *init);
+sds sdsempty(void);
+size_t sdslen(const sds s);
 
 
 

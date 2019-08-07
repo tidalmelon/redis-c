@@ -134,6 +134,8 @@ typedef struct redisDb {
      robj *name;    // 客户端的名字
 
      sds querybuf;  // 查询缓冲区
+
+     size_t querybuf_peak;   // 查询缓冲区长度峰值
  }
 
 
