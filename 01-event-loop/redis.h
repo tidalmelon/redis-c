@@ -89,6 +89,83 @@
 
 #define REDIS_LRU_BITS 24
 
+//
+// redisObject
+//
+typedef struct redisObject {
+
+    unsigned type : 4;   //类型
+
+    unsigned encoding : 4;  //编码
+
+    unsigned lru : REDIS_LRU_BITS;  //对象最后一次被访问的时间
+
+    int refcount;  //引用计数
+
+    void *ptr;     // 指向实际值的指针
+} robj;
+
+
+typedef struct redisDb {
+
+    dict *dict;          // 数据库键空间，保存着数据库中的所有键值对
+
+    dict *expires;       // 键的过期时间，字典的键为键，字典的值为过期事件(时间吧，估计写错了) UNIX 时间戳
+
+    dict *blocking_keys; // 正处于阻塞状态的键
+
+    dict *ready_keys;    // 可以解除阻塞的键
+
+    int id;              // 数据库号码
+} redisDb;
+
+/*
+ * 因为 I/O 复用的缘故， 需要为每个客户端维持一个状态
+ *
+ * 多个客户端状态被服务器用链表连接起来
+ */
+ typedef struct redisClient {
+     int fd;   //套接字描述符
+
+     redisDb *db;   // 当前正在使用的数据库
+
+     int dictid;    // 当前正在使用的数据库的 id (号码)
+
+     robj *name;    // 客户端的名字
+
+     sds querybuf;  // 查询缓冲区
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
