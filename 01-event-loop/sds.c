@@ -55,6 +55,75 @@ sds sdsnewlen(const void *init, size_t initlen) {
     return (char*)sh->buf;
 }
 
+/*
+ * 创建并返回一个只保存了空字符串 "" 的 sds
+ *
+ * 返回值
+ *  sds ：创建成功返回 sdshdr 相对应的 sds
+ *        创建失败返回 NULL
+ *
+ * 复杂度
+ *  T = O(1)
+ */
+ sds sdsempty(void) {
+     return sdsnewlen("", 0);
+ }
+
+/*
+ * 根据给定字符串 init, 创建一个包含同样字符串的 sds
+ *
+ * 参数
+ *  init: 如果输入为NULL， 那么创建一个空白 sds
+ *        否则, 新创建的 sds 中包含和 init 内容相同字符串
+ *
+ * 返回值
+ *  sds : 创建成功返回 sdshdr 相对应的 sds
+ *        创建失败返回 NULL
+ *
+ * 复杂度
+ *  T = O(N)
+ */
+sds sdsnew(const char *init) {
+    size_t initlen = (init == NULL) ? 0 : strlen(init);
+    return sdsnewlen(init, initlen);
+}
+
+/*
+ * 复制给定 sds 的副本
+ *
+ * 返回值
+ *  sds : 创建成功返回输入 sds 副本
+ *        创建失败返回 NULL
+ *
+ *  复杂度
+ *   T = O(N)
+ */
+sds sdsdup(const sds s) {
+    return sdsnewlen(s, sdslen(s));
+}
+
+/*
+ * 释放给定的 sds
+ *
+ * 复杂度
+ *  T = O(N)
+ */
+void sdsfree(sds s) {
+    if (s == NULL) return;
+    zfree(s - sizeof(struct sdshdr));
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

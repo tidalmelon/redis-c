@@ -42,8 +42,8 @@ void zlibc_free(void *ptr) {
     } \
 } while(0)
 
-#define update_zmalloc_stat_free(__n) do { \
-    size_t _n = (__n); \
+//#define update_zmalloc_stat_free(__n) do { \
+//    size_t _n = (__n); \
 
 
 
@@ -56,6 +56,39 @@ void zlibc_free(void *ptr) {
 
 
 
+static void zmalloc_default_oom(size_t size) {
+    fprintf(stderr, "zmalloc: Out of memory trying to allocate %zu bytes\n", 
+        size);
+    fflush(stderr);
+    abort();
+}
+
+
+
+
+
+
+static void (*zmalloc_oom_handler)(size_t) = zmalloc_default_oom;
+
+
+
+
+
+
+
+
+
+
+
+void *zcalloc(size_t size) {
+    void *ptr = calloc(1, size+PREFIX_SIZE);
+
+    if (!ptr) zmalloc_oom_handler(size);
+
+    *((size_t*)ptr) = size; // 居然要记录下内存块的大小
+    update_zmalloc_stat_alloc(size+PREFIX_SIZE);
+    return (char*)ptr+PREFIX_SIZE;
+}
 
 
 
