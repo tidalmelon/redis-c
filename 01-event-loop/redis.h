@@ -124,7 +124,7 @@ typedef struct redisDb {
  *
  * 多个客户端状态被服务器用链表连接起来
  */
- typedef struct redisClient {
+typedef struct redisClient {
      int fd;   //套接字描述符
 
      redisDb *db;   // 当前正在使用的数据库
@@ -136,7 +136,97 @@ typedef struct redisDb {
      sds querybuf;  // 查询缓冲区
 
      size_t querybuf_peak;   // 查询缓冲区长度峰值
- }
+
+     int argc;   // 参数数量
+
+     robj **argv;  // 参数对象数组
+
+     struct redisCommand *cmd, *lastcmd;    // 记录被客户端执行的命令
+
+     int reqtype  // 请求的类型，是内联命令还是多条命令
+
+     int multibulklen;  // 剩余未读取的命令内容数量
+
+     long bulklen;      // 命令内容的长度
+
+     list *reply;      // 回复链表
+
+     unsigned long reply_bytes;   // 回复链表中对象的总大小
+
+     int bufpos;    // 回复偏移量
+
+     char buf[REDIS_REPLY_CHUNK_BYTES];
+} redisClient;
+
+
+
+struct redisServer {
+
+    /* Generic */
+    char *configfile;      // 配置文件的绝对路径
+
+    int hz;                // serverCron()  每秒调用的次数
+
+    redisDb *db;           // 一个数组，保存着服务器中所有的数据库
+
+    dict *commands;        // 命令表 （受到 rename 配置选项的作用）
+
+    dict *orig_commands;   // Command table before command renaming.
+
+    aeEventLoop *el;   // 事件状态
+
+    int shutdown_asap;   // 关闭服务器的标识
+
+    int port;
+    int tcp_backlog;
+    int *bindaddr[REDIS_BINDADDR_MAX]; // ip 地址
+    int bindaddr_count;    // 地址的数量
+
+    int ipfd[REDIS_BINDADDR_MAX];    // tcp 描述符
+    int ipfd_count;                  //已经使用了的描述符的数目
+
+    list *clients;        // 一个链表，保存了所有的客户端状态结构
+    list *clients_to_close;  // 链表，保存了所有待关闭的客户端
+
+    redisClient *current_client;   // 服务器当前服务的客户端, 仅用于崩溃报告
+
+    char neterr[ANET_ERR_LEN];     // 用于记录网络错误
+
+    int tcpkeepalive;        // 是否开启 SO_KEEPALIVE 选项
+    int dbnum;               //  数据库的总数目
+
+    /* Limits */
+    int maxclients;             //max number of simultaneous clients
+    
+};
+
+
+typedef void redisCommandProc(redisClient *c);
+typedef int *redisGetKeysProc(struct redisCommand *cmd, robj **argv, int argc, int *numkeys);
+
+//
+// redisCommand Redis 命令
+//
+struct redisCommand {
+    
+    char *name;
+
+    redisCommandProc *proc;
+
+    int arity;
+
+    char *sflags;
+
+    int flags;
+
+    redisGetKeysProc *getkeys_proc;
+
+    int firstkey;
+    int lastkey;
+    int keystep;
+
+    long long microseconds, calls;
+};
 
 
 
@@ -149,50 +239,7 @@ typedef struct redisDb {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* api */
+int processCommand(redisClient *c);
 
 #endif
